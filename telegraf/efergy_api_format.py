@@ -29,7 +29,15 @@ def run_efergy_request(efergy_token):
         # downloads in byte format the response from the api
         response_dict = json.loads(response_byte.decode('utf-8'))
         # turns bytes format to dictionary/json
-    except:
+
+    except urllib.error.URLError as url_error:
+        # Handle URL-related errors (e.g., network issues, invalid URLs)
+        print(f"Error fetching data: {url_error}")
+        response_dict = None
+
+    except json.JSONDecodeError as json_error:
+        # Handle JSON decoding errors (e.g., invalid JSON format)
+        print(f"Error decoding JSON: {json_error}")
         response_dict = None
 
     return response_dict
@@ -78,4 +86,4 @@ if api_output is not None:
     line_data = convert_to_line(api_output)
     print(line_data)
 else:
-    print(f"HTTP error occurred")
+    print("HTTP error occurred")
