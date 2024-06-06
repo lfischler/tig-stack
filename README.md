@@ -1,10 +1,9 @@
 
-![Logo](https://user-images.githubusercontent.com/64506580/159311466-f720a877-6c76-403a-904d-134addbd6a86.png)
+# Telegraf, InfluxDB, Grafana (TIG) Stack for Data Ingestion from Efergy Devices
 
+Gain the ability to analyse and monitor Efergy data by deploying the TIG stack using [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
-# Telegraf, InfluxDB, Grafana (TIG) Stack
-
-Gain the ability to analyze and monitor telemetry data by deploying the TIG stack within minutes using [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/).
+Built on [Huntabyte's TIG Stack Tutorial](https://github.com/huntabyte/tig-stack).
 
 
 
@@ -14,7 +13,7 @@ Gain the ability to analyze and monitor telemetry data by deploying the TIG stac
 Clone the project
 
 ```bash
-git clone https://github.com/huntabyte/tig-stack.git
+git clone https://github.com/lfischler/tig-stack.git
 ```
 
 Navigate to the project directory
@@ -49,15 +48,19 @@ docker-compose up -d
 ```
 ## Docker Images Used (Official & Verified)
 
-[**Telegraf**](https://hub.docker.com/_/telegraf) / `1.19`
+[**Telegraf**](https://hub.docker.com/_/telegraf) / `1.30.3`
 
-[**InfluxDB**](https://hub.docker.com/_/influxdb) / `2.1.1`
+[**InfluxDB**](https://hub.docker.com/_/influxdb) / `2.7`
 
-[**Grafana-OSS**](https://hub.docker.com/r/grafana/grafana-oss) / `8.4.3`
+[**Grafana-OSS**](https://hub.docker.com/r/grafana/grafana-oss) / `11.0.0`
 
 
 
 ## Contributing
 
 Contributions are always welcome!
+
+## Acknowledgements
+
+Thanks to Huntabyte's original tutorial and code.
 

@@ -1,5 +1,5 @@
 # Use the official Telegraf image as a parent image
-FROM telegraf:1.19
+FROM telegraf:1.30.3
 
 # Update the package lists for upgrades and new packages
 RUN apt-get update

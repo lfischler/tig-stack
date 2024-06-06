@@ -1,6 +1,6 @@
 services:
   influxdb:
-    image: influxdb:2.1.1
+    image: influxdb:2.7
     volumes:
       - influxdb-storage:/var/lib/influxdb2:rw
     env_file:
@@ -22,7 +22,7 @@ services:
       - influxdb
 
   grafana:
-    image: grafana/grafana-oss:8.4.3
+    image: grafana/grafana-oss:11.0.0
     volumes:
       - grafana-storage:/var/lib/grafana:rw
     depends_on:
