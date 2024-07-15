@@ -3,6 +3,10 @@ import urllib.request
 import urllib.error
 import json
 import os
+from dotenv import load_dotenv
+
+# Load the .env file
+load_dotenv()
 
 
 efergy_tokens = {
