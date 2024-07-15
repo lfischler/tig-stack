@@ -5,8 +5,10 @@ import json
 import os
 
 
-efergy_token = os.environ.get('EFERGY_TOKEN')
-# Replace with Efergy App Token
+efergy_tokens = {
+    'P1': os.environ.get('EFERGY_TOKEN_1'),
+    'P2': os.environ.get('EFERGY_TOKEN_2')
+}
 
 
 def run_efergy_request(efergy_token):
@@ -43,7 +45,7 @@ def run_efergy_request(efergy_token):
     return response_dict
 
 
-def convert_to_line(api_output):
+def convert_to_line(api_output, participant_no):
     '''
     Converts to line protocol format
 
@@ -54,16 +56,17 @@ def convert_to_line(api_output):
 
     line_protocol_data_list = []
     # create empty list to store line protocol data
-    line_protocol_all_data_string = ""
-    # create empty string which will store the line protocol data in the
-    # correct format (with new lines between readings)
+
+    # line_protocol_all_data_string = ""
+    # # create empty string which will store the line protocol data in the
+    # # correct format (with new lines between readings)
 
     # Iterate through each item in the 'api_output' list returned
     for item in api_output:
         # save type of measurement
         measurement = item['cid']
         # save SID number
-        tags = f'sid={item["sid"]}'
+        tags = f'sid={item["sid"]},participant_no={participant_no}'
         # Iterate through each datapoint in the 'data' list
         for datapoint in item['data']:
             # Extract the timestamp and value from the datapoint
@@ -81,9 +84,16 @@ def convert_to_line(api_output):
     return line_protocol_all_data_string
 
 
-api_output = run_efergy_request(efergy_token)
-if api_output is not None:
-    line_data = convert_to_line(api_output)
-    print(line_data)
-else:
-    print("HTTP error occurred")
+all_line_data = []
+
+for participant, token in efergy_tokens.items():
+    api_output = run_efergy_request(token)
+    if api_output is not None:
+        line_data = convert_to_line(api_output, participant)
+        all_line_data.append(line_data)
+    else:
+        print(f"HTTP error occurred for {participant}")
+
+
+final_line_data = '\n'.join(all_line_data)
+print(final_line_data)
