@@ -23,5 +23,8 @@ WORKDIR /etc/telegraf
 # Copy files into the container
 COPY efergy_api_format.py $EFERGY_SCRIPT_PATH
 
+# Source the virtual environment in the entrypoint script
+ENTRYPOINT ["/bin/bash", "-c", ". /opt/venv/bin/activate && exec telegraf"]
+
 # Run Telegraf when the container launches
 CMD ["telegraf"]
