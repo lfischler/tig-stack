@@ -5,10 +5,12 @@ FROM telegraf:1.30.3
 RUN apt-get update
 
 # Install Python and pip
-RUN apt-get install -y python3 python3-pip
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install the dotenv library
-RUN pip3 install python-dotenv
+# Install boto3 for AWS Secrets Manager
+RUN pip3 install boto3
 
 # clean cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*

@@ -3,16 +3,39 @@ import urllib.request
 import urllib.error
 import json
 import os
-from dotenv import load_dotenv
-
-# Load the .env file
-load_dotenv()
+import boto3
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 
 
-efergy_tokens = {
-    'P1': os.environ.get('EFERGY_TOKEN_1'),
-    'P2': os.environ.get('EFERGY_TOKEN_2')
-}
+def get_secrets():
+    secret_name = "20240722_dataisland_apptokens"  # Update with your secret name
+    region_name = "eu-west-2"  # Update with your region
+
+    # Create a Secrets Manager client
+    client = boto3.client('secretsmanager', region_name=region_name)
+
+    try:
+        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        secret = get_secret_value_response['SecretString']
+        return json.loads(secret)
+    except (NoCredentialsError, PartialCredentialsError) as e:
+        print(f"Credentials error: {e}")
+        return None
+    except Exception as e:
+        print(f"Error retrieving secret: {e}")
+        return None
+
+secrets = get_secrets()
+if secrets:
+    efergy_tokens = {
+        'P1': secrets.get('1.1.0'),
+        'P2': secrets.get('2.1.0'),
+        'P3': secrets.get('3.1.0'),
+        'P4': secrets.get('4.1.0'),
+
+    }
+else:
+    efergy_tokens = {}
 
 
 def run_efergy_request(efergy_token):
@@ -35,6 +58,11 @@ def run_efergy_request(efergy_token):
         # downloads in byte format the response from the api
         response_dict = json.loads(response_byte.decode('utf-8'))
         # turns bytes format to dictionary/json
+
+        # Check for specific error message in the JSON response (likely if device not plugged in)
+        if 'error' in response_dict and response_dict['error'].get('id') == 500:
+            print(f"Server Error: {response_dict['error'].get('desc')} - {response_dict['error'].get('more')}")
+            response_dict = None
 
     except urllib.error.URLError as url_error:
         # Handle URL-related errors (e.g., network issues, invalid URLs)
