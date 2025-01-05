@@ -1,20 +1,13 @@
-// *title* - Energy Consumption during Timeperiod
-// *description* - **
-// *units* - kWh
-// *setup* - Set x axis as "Time"
-
 // Initial window period as duration
 initialWindowPeriod = v.windowPeriod
 
 // Convert durations to integers (nanoseconds) for comparison
 initialWindowNs = int(v: initialWindowPeriod)
-oneDayNs = int(v: duration(v: "1d"))
+oneDayNs = int(v: duration(v: "3h"))
 oneHourNs = int(v: duration(v: "1h"))
-timeRange = int(v: v.timeRangeStop) - int(v: v.timeRangeStart)
-sixDaysNs = int(v: duration(v: "6d"))
 
-// Apply the maximum limit
-maxWindowNs = if timeRange > sixDaysNs then oneDayNs else initialWindowNs
+// Apply the maximum limit of 1 day
+maxWindowNs = if initialWindowNs > oneDayNs then oneDayNs else initialWindowNs
 
 // Apply the minimum limit of 1 hour
 finalWindowNs = if maxWindowNs < oneHourNs then oneHourNs else maxWindowNs
@@ -32,14 +25,9 @@ from(bucket: "telegraf")
   |> filter(fn: (r) => r["sid"] == "818129" or r["sid"] == "823963")
   |> drop(columns: ["host"])
 
-  // Convert values to float and calculate energy in kWh
+// Convert values to float and calculate energy in kWh
   |> map(fn: (r) => ({ r with energy_kwh: (float(v: r._value) * (10.0 / 3600.0)) / 1000.0 }))
   
-
-
-
-
-
   |> window(every: finalWindowPeriod)
   
   |> sum(column: "energy_kwh") // Sum hourly energy consumption in kWh

@@ -1,3 +1,7 @@
+// *title* - Power consumed by household during time period selected
+// *description* - **
+// *units* - kWh
+
 // get required data
 from(bucket: "telegraf")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
@@ -6,7 +10,7 @@ from(bucket: "telegraf")
   |> filter(fn: (r) => r["participant_no"] == "P1")
   |> filter(fn: (r) => r["sid"] == "818129" or r["sid"] == "823963")
 
- // Convert values to float and calculate energy in kWh
+ // Convert values to float and calculate energy in kWh based on fact reading is taken every 10s
   |> map(fn: (r) => ({
       r with
       energy_kwh: (float(v: r._value) * (10.0 / 3600.0)) / 1000.0
