@@ -1,14 +1,14 @@
-// *title* - Power consumed by household during time period selected
-// *description* - **
-// *units* - kWh
+// *title* - Power Consumption during Timeperiod
+// *description* - This gauge shows the total energy consumption (in kilowatt-hours) within your household for the selected time window. The value reflects the cumulative energy used over the specified time range, providing a clear and immediate indication of your total power consumption. By adjusting the time range, you can track your household's overall energy usage and monitor your consumption trends.
+// *Units*: kWh
 
 // get required data
 from(bucket: "telegraf")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
   |> filter(fn: (r) => r["_measurement"] == "PWER")
   |> filter(fn: (r) => r["_field"] == "value")
-  |> filter(fn: (r) => r["participant_no"] == "P1")
-  |> filter(fn: (r) => r["sid"] == "818129" or r["sid"] == "823963")
+  |> filter(fn: (r) => r["participant_no"] == "${p}")
+  |> filter(fn: (r) => r["sid"] == "${sid1}")
 
  // Convert values to float and calculate energy in kWh based on fact reading is taken every 10s
   |> map(fn: (r) => ({

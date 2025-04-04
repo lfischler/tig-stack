@@ -1,7 +1,6 @@
-// *title* - Energy Consumption during Timeperiod
-// *description* - **
+// *title* - Power Consumption during Timeperiod
+// *description* - This graph displays the aggregated total energy consumption (in kilowatt-hours) within your household, broken down into time blocks based on your selected time range. The graph allows you to see how much energy has been used over specific intervals (e.g., daily, weekly, monthly), with each block representing the total consumption for that period. By adjusting the time range, you can analyze patterns in your energy usage, identify peak consumption times, and make data-driven decisions to optimize your household's energy efficiency.
 // *units* - kWh
-// *setup* - Set x axis as "Time"
 
 // Initial window period as duration
 initialWindowPeriod = v.windowPeriod
@@ -28,17 +27,12 @@ from(bucket: "telegraf")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
   |> filter(fn: (r) => r["_measurement"] == "PWER")
   |> filter(fn: (r) => r["_field"] == "value")
-  |> filter(fn: (r) => r["participant_no"] == "P1")
-  |> filter(fn: (r) => r["sid"] == "818129" or r["sid"] == "823963")
+  |> filter(fn: (r) => r["participant_no"] == "${p}")
+  |> filter(fn: (r) => r["sid"] == "${sid1}")
   |> drop(columns: ["host"])
 
   // Convert values to float and calculate energy in kWh
   |> map(fn: (r) => ({ r with energy_kwh: (float(v: r._value) * (10.0 / 3600.0)) / 1000.0 }))
-  
-
-
-
-
 
   |> window(every: finalWindowPeriod)
   
